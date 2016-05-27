@@ -1,0 +1,8 @@
+[Kafka]
+servers: localhost:9092
+
+[Nexmo-Callback]
+kafka_topic: 'strata_sms'
+
+[Redirect]
+producer_kafka_topic: 'expanded_sms'
