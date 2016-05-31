@@ -2,7 +2,7 @@
 servers: localhost:9092
 
 [Nexmo-Callback]
-kafka_topic: 'strata_sms'
+kafka_topic: strata_sms_nexmo
 
 [Redirect]
-producer_kafka_topic: 'expanded_sms'
+producer_kafka_topic: expanded_sms_nexmo
