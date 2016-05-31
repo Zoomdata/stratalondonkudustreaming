@@ -37,6 +37,7 @@ while True:
             size = int(tokens[1])
             size = min([size,10000])
             value = tokens[0].title().lower()
+            value = value.title()
             json_text['text'] = value
             jsonString = JSONEncoder().encode(json_text)
             if value in d:
