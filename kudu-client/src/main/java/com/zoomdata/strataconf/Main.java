@@ -26,6 +26,8 @@ public class Main {
 
     private static final Integer BUCKETS_NUM = Integer.valueOf(System.getProperty("bucketsNum", "60"));
 
+    private static final Integer REPLICAS_NUM = Integer.valueOf(System.getProperty("replicaNum", "3"));
+
     final static Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) throws Exception {
@@ -36,12 +38,12 @@ public class Main {
         log.info("-----------------------------------------------");
 
         final KuduClient client = new KuduClient.KuduClientBuilder(KUDU_MASTER).build();
-        createTable(client, TABLE_NAME, BUCKETS_NUM);
+        createTable(client, TABLE_NAME, BUCKETS_NUM, REPLICAS_NUM);
         log.info(String.format("Table '%s' successfully created", TABLE_NAME));
     }
 
     private static KuduTable createTable(
-            final KuduClient client, final String tableName, final int bucketsNum) throws Exception {
+            final KuduClient client, final String tableName, final int bucketsNum, final int replicas) throws Exception {
 
         log.info(String.format("Will create table '%s'", tableName));
         log.info("Run with -DtableName=TABLE_NAME to override");
@@ -72,8 +74,10 @@ public class Main {
             final CreateTableOptions tableOptions = new CreateTableOptions();
 
             String[] partitionColumns = {"_ts"};
-            log.info("Using hash partitions for {} columns and {} buckets", partitionColumns, bucketsNum);
+            log.info("Using hash partitions for {} columns, {} replicas and {} buckets",
+                    partitionColumns, replicas, bucketsNum);
             tableOptions.addHashPartitions(Arrays.asList(partitionColumns), bucketsNum);
+            tableOptions.setNumReplicas(replicas);
 
             return client.createTable(tableName, schema, tableOptions);
 
