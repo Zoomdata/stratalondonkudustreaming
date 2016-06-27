@@ -22,18 +22,33 @@ def send(msg):
     message_type = request.args.get('type')
     keyword = request.args.get('keyword')
     timestamp = request.args.get('message-timestamp')
-    number = phonenumbers.parse("+" + msisdn)
-    message_object = {
-        'msisdn' : msisdn,
-        'to' : to,
-        'messageId' : messageId,
-        'text' : text.lower(),
-        'message_type' : message_type,
-        'keyword' : keyword,
-        'timestamp' : timestamp,
-        'country_code' : str(number.country_code),
-        'country_area_code' : str(number.national_number)[:-7]
-      }
+    try: 
+      number = phonenumbers.parse("+" + msisdn)
+      message_object = {
+          'msisdn' : msisdn,
+          'to' : to,
+          'messageId' : messageId,
+          'text' : text.lower(),
+          'message_type' : message_type,
+          'keyword' : keyword,
+          'timestamp' : timestamp,
+          'country_code' : str(number.country_code),
+          'country_area_code' : str(number.national_number)[:-7]
+        }
+    except Exception as e:
+      message_object = {
+          'msisdn' : msisdn,
+          'to' : to,
+          'messageId' : messageId,
+          'text' : text.lower(),
+          'message_type' : message_type,
+          'keyword' : keyword,
+          'timestamp' : timestamp,
+          'country_code' : 'unknown',
+          'country_area_code' : 'unknown'
+        }
+      print "error"
+      
     jsonString = JSONEncoder().encode(message_object)
     producer.send(publish_topic, jsonString.encode('utf8'))
     return '<p>Sent %s to sms topic </p> \n' % str(text)
